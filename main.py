@@ -2,6 +2,10 @@
 import pyttsx3
 import speech_recognition as sr
 import random
+import requests
+
+open_weather_token = 'a47d6ab82e58378d27beefdd5318771c'
+city = "moscow"
 
 #setin engine
 engine = pyttsx3.init()
@@ -39,6 +43,14 @@ def record_volume():
 
         if 'я' in text and 'люблю' in text and 'тебя' in text:
             ans += ('Если ваш день вдруг станет пасмурным, подойдите к зеркалу и увидите солнышко')
+
+        if 'погода' in text or 'температура' in text:
+            result = requests.get(
+                f"https://api.openweathermap.org/data/2.5/weather?q=Moscow&appid=df8247b4dc07c75a6f453cd61b4761e3&units=metric"
+            )
+            data = result.json()
+            ans += ("Температура в Москве " + str(
+                data['main']['temp']) + "Ощущается как " + str(data['main']['feels_like']))
 
         #model replies
         engine.say(ans)
