@@ -1,12 +1,10 @@
 #Libraries
 import pyttsx3
 import speech_recognition as sr
-import random
 import requests
 import json
 from difflib import get_close_matches
 import subprocess
-from transformers import AutoTokenizer, AutoModelWithLMHead
 
 open_weather_token = 'a47d6ab82e58378d27beefdd5318771c'
 city = "Moscow"
