@@ -56,7 +56,7 @@ def record_volume():
         if 'привет' in text or 'Добрый' in text:
             ans += 'Здравствуйте'
 
-        elif 'как' in text and 'дела' in text:
+        if 'как' in text and 'дела' in text:
             ans += (random.choice(mood) + 'а у вас')
 
         if 'я' in text and 'люблю' in text and 'тебя' in text:
