@@ -4,7 +4,22 @@ import speech_recognition as sr
 import random
 import requests
 import subprocess
-import os
+
+#блок очко
+'''from openai import OpenAI
+
+client = OpenAI(api_key="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")
+
+completion = client.chat.completions.create(
+  model="gpt-3.5-turbo",
+  messages=[
+    {"role": "system", "content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."},
+    {"role": "user", "content": "Compose a poem that explains the concept of recursion in programming."}
+  ]
+)
+
+print(completion.choices[0].message)'''
+
 
 open_weather_token = 'a47d6ab82e58378d27beefdd5318771c'
 city = "Moscow"
@@ -41,7 +56,7 @@ def record_volume():
         if 'привет' in text or 'Добрый' in text:
             ans += 'Здравствуйте'
 
-        if 'как' in text and 'дела' in text:
+        elif 'как' in text and 'дела' in text:
             ans += (random.choice(mood) + 'а у вас')
 
         if 'я' in text and 'люблю' in text and 'тебя' in text:
@@ -57,12 +72,18 @@ def record_volume():
         if 'telegram' in text:
             subprocess.Popen(["open", '/Applications/Telegram.app'])
 
+        #ans += model_reply(text)
+
+
         #model replies
-        print(text)
         engine.say(ans)
     except:
         print('Error')
 
-while True:
-    record_volume()
-    engine.runAndWait()
+def main():
+    while True:
+        #record_volume()
+        engine.runAndWait()
+
+if __name__ == '__main__':
+    main()
