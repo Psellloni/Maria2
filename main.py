@@ -3,9 +3,11 @@ import pyttsx3
 import speech_recognition as sr
 import random
 import requests
+import subprocess
+import os
 
 open_weather_token = 'a47d6ab82e58378d27beefdd5318771c'
-city = "moscow"
+city = "Moscow"
 
 #setin engine
 engine = pyttsx3.init()
@@ -13,6 +15,7 @@ engine = pyttsx3.init()
 #engine settings
 engine.setProperty('rate', 40)
 engine.setProperty('volume', 0.9)
+engine.setProperty('voice', 'com.apple.voice.compact.ru-RU.Milena')
 
 #moods
 mood = ['Отлично', 'Всё в порядке', 'Отстань', 'пока не родила азазазазаз']
@@ -46,13 +49,16 @@ def record_volume():
 
         if 'погода' in text or 'температура' in text:
             result = requests.get(
-                f"https://api.openweathermap.org/data/2.5/weather?q=Moscow&appid=df8247b4dc07c75a6f453cd61b4761e3&units=metric"
+                f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={open_weather_token}&units=metric"
             )
             data = result.json()
             ans += ("Температура в Москве " + str(
                 data['main']['temp']) + "Ощущается как " + str(data['main']['feels_like']))
+        if 'telegram' in text:
+            subprocess.Popen(["open", '/Applications/Telegram.app'])
 
         #model replies
+        print(text)
         engine.say(ans)
     except:
         print('Error')
@@ -60,5 +66,3 @@ def record_volume():
 while True:
     record_volume()
     engine.runAndWait()
-
-    x = 5
