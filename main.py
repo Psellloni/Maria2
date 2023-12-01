@@ -13,7 +13,7 @@ city = "Moscow"
 engine = pyttsx3.init()
 
 #engine settings
-engine.setProperty('rate', 40)
+engine.setProperty('rate', 100)
 engine.setProperty('volume', 0.9)
 engine.setProperty('voice', 'com.apple.voice.compact.ru-RU.Milena')
 
@@ -74,6 +74,9 @@ def brain():
         data = result.json()
         engine.say("Температура в Москве " + str(
             data['main']['temp']) + "Ощущается как " + str(data['main']['feels_like']))
+    elif 'пока' in text:
+        engine.say('Всего доброго')
+        return False
     elif 'telegram' in text:
         engine.say('Запускаю телеграм')
         subprocess.Popen(["open", '/Applications/Telegram.app'])
@@ -88,11 +91,14 @@ def brain():
             base['questions'].append({'question': text, 'answer': curr_ans})
             save_knowledge_base('knowledge_basis.json', base)
             engine.say('Спасибо, моя база знаний пополнилась')
-
+    return True
 def main():
     while True:
-        brain()
+        flag = brain()
         engine.runAndWait()
+
+        if flag == False:
+            break
 
 if __name__ == '__main__':
     main()
