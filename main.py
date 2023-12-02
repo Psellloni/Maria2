@@ -6,6 +6,7 @@ import json
 from difflib import get_close_matches
 import subprocess
 import bs4
+import webbrowser
 
 # setting weather parametrs
 token = 'a47d6ab82e58378d27beefdd5318771c'
@@ -19,6 +20,13 @@ engine.setProperty('voice', 'com.apple.voice.compact.ru-RU.Milena')
 
 # setting speech recognizer
 r = sr.Recognizer()
+
+
+class Browser:
+    @staticmethod
+    def open_browser(input: str):
+
+        webbrowser.open('https://www.google.com/search?q=' + input)
 
 
 class Anecdote:
@@ -129,6 +137,11 @@ class Maria:
 
             engine.say(reply)
 
+        # модуль не работает
+        # elif 'загугли' in text:
+        #     Browser.open_browser(text)
+        #     print(text)
+
         else:
             if best_match:
                 engine.say(DataBase.get_answer(best_match, base))
@@ -142,6 +155,7 @@ class Maria:
                 DataBase.save_knowledge_base('knowledge_basis.json', base)
 
                 engine.say('Спасибо, моя база знаний пополнилась')
+
         return True
 
 
