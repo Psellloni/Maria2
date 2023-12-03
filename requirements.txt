@@ -1,0 +1,3 @@
+py3-tts
+SpeechRecognition
+bs4
