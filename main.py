@@ -7,6 +7,7 @@ from difflib import get_close_matches
 import subprocess
 import bs4
 import webbrowser
+import random
 
 # setting weather parametrs
 token = 'a47d6ab82e58378d27beefdd5318771c'
@@ -20,6 +21,62 @@ engine.setProperty('voice', 'com.apple.voice.compact.ru-RU.Milena')
 
 # setting speech recognizer
 r = sr.Recognizer()
+
+class Audio:
+    @staticmethod
+    def recognize_text():
+        with sr.Microphone(device_index=0) as source:
+            print('Настраиваюсь.')
+            r.adjust_for_ambient_noise(source, duration=0.5)
+            print('Слушаю...')
+            data = r.listen(source)
+
+        print('Услышала.')
+
+        try:
+            query = r.recognize_google(data, language='ru-RU')
+
+            return query.lower()
+
+        except:
+            print('Error')
+
+class Words_game:
+    @staticmethod
+    def play():
+        with open('words_base.json', 'r') as file:
+            data = json.load(file)
+            curr = "роза"
+
+            engine.say("я начну")
+            engine.say(curr)
+            engine.runAndWait()
+
+            while True:
+                curr_letter = curr[-1]
+
+                engine.say("вам на " + curr_letter)
+                engine.runAndWait()
+
+                user_input = Audio.recognize_text()
+                user_input = user_input.replace(' ', '')
+
+                if user_input == 'стоп':
+                    break
+
+                else:
+                    if user_input[0] == curr_letter:
+                        if user_input[-1] in ["ъ", "ь", "ы"]:
+                            curr = random.choice(data[user_input[-2]])
+
+                        else:
+                            curr = random.choice(data[user_input[-1]])
+
+                        engine.say(curr)
+                        engine.runAndWait()
+                    else:
+                        engine.say("это слово не на букву " + curr_letter)
+                        engine.runAndWait()
 
 
 class Browser:
@@ -82,27 +139,6 @@ class DataBase:
 
                 return val['answer']
 
-
-class Audio:
-    @staticmethod
-    def recognize_text():
-        with sr.Microphone(device_index=0) as source:
-            print('Настраиваюсь.')
-            r.adjust_for_ambient_noise(source, duration=0.5)
-            print('Слушаю...')
-            data = r.listen(source)
-
-        print('Услышала.')
-
-        try:
-            query = r.recognize_google(data, language='ru-RU')
-
-            return query.lower()
-
-        except:
-            print('Error')
-
-
 class Maria:
     @staticmethod
     def brain():
@@ -141,6 +177,10 @@ class Maria:
         # elif 'загугли' in text:
         #     Browser.open_browser(text)
         #     print(text)
+
+        # дописать возможность обучаться
+        elif 'давай' in text or 'поиграем' in text or 'слова' in text:
+            Words_game.play()
 
         else:
             if best_match:
