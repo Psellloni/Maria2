@@ -41,42 +41,57 @@ class Audio:
         except:
             print('Error')
 
-class Words_game:
+class WordsDataBase:
+    @staticmethod
+    def load_database(file_path: str):
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+
+        return data
+
+    @staticmethod
+    def save_knowledge_base(filepath: str, data: dict):
+        with open(filepath, 'w') as file:
+            json.dump(data, file, indent=2)
+
+class WordsGame:
     @staticmethod
     def play():
-        with open('words_base.json', 'r') as file:
-            data = json.load(file)
-            curr = "роза"
+        word_data_base = WordsDataBase.load_database('words_base.json')
 
-            engine.say("я начну")
-            engine.say(curr)
+        curr = "роза"
+
+        engine.say("я начну")
+        engine.say(curr)
+        engine.runAndWait()
+
+        while True:
+            curr_letter = curr[-1]
+
+            engine.say("вам на " + curr_letter)
             engine.runAndWait()
 
-            while True:
-                curr_letter = curr[-1]
+            user_input = Audio.recognize_text()
+            user_input = user_input.replace(' ', '')
 
-                engine.say("вам на " + curr_letter)
-                engine.runAndWait()
+            if user_input == 'стоп':
+                WordsDataBase.save_knowledge_base('words_base.json', word_data_base)
+                break
 
-                user_input = Audio.recognize_text()
-                user_input = user_input.replace(' ', '')
+            else:
+                if user_input[0] == curr_letter:
+                    if user_input[-1] in ["ъ", "ь", "ы"]:
+                        curr = random.choice(word_data_base[user_input[-2]])
 
-                if user_input == 'стоп':
-                    break
-
-                else:
-                    if user_input[0] == curr_letter:
-                        if user_input[-1] in ["ъ", "ь", "ы"]:
-                            curr = random.choice(data[user_input[-2]])
-
-                        else:
-                            curr = random.choice(data[user_input[-1]])
-
-                        engine.say(curr)
-                        engine.runAndWait()
                     else:
-                        engine.say("это слово не на букву " + curr_letter)
-                        engine.runAndWait()
+                        word_data_base[user_input[-1]].append(str(user_input))
+                        curr = random.choice(word_data_base[user_input[-1]])
+
+                    engine.say(curr)
+                    engine.runAndWait()
+                else:
+                    engine.say("это слово не на букву " + curr_letter)
+                    engine.runAndWait()
 
 
 class Browser:
@@ -178,9 +193,8 @@ class Maria:
         #     Browser.open_browser(text)
         #     print(text)
 
-        # дописать возможность обучаться
         elif 'давай' in text or 'поиграем' in text or 'слова' in text:
-            Words_game.play()
+            WordsGame.play()
 
         else:
             if best_match:
